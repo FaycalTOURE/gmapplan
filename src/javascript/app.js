@@ -7,6 +7,7 @@ let markerArray = [];
 
 let flightPlanCoordinates,
     flightPath,
+    flightPathStatus = false,
     sideBar = document.getElementById('sidebar'),
     paneList = document.getElementById('pane');
 
@@ -24,6 +25,10 @@ function initMap(listener) {
     });
 
     const onChangeHandler = function () {
+
+        if(flightPathStatus)
+            flightPath.setMap(null);
+
         let start = returnMarkersIndex(markerArray, 1);
         let end = returnMarkersIndex(markerArray, 2);
 
@@ -43,6 +48,10 @@ function initMap(listener) {
             strokeOpacity: 1.0,
             strokeWeight: 2,
         });
+
+        addLine(flightPath, map);
+        toggleSideBar();
+        flightPathStatus = true;
     };
 
     map.addListener("click", (e) => {
@@ -53,14 +62,14 @@ function initMap(listener) {
         // We draw positions
         if(getMarkersLength() === 2){
             onChangeHandler();
-            addLine(flightPath, map);
-            toggleSideBar();
         }
     });
 }
 
 // add Marker
 function addMarker(latLng, map) {
+    toggleSideBar();
+
     let marker = new google.maps.Marker({
         position: latLng,
         map: map,
@@ -72,6 +81,7 @@ function addMarker(latLng, map) {
             if(getMarkersLength() >= 1)
                 removeLine();
                 sideBar.hidden = true;
+            flightPathStatus = false;
         }
     });
 
