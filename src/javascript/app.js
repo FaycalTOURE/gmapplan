@@ -78,7 +78,7 @@ function addMarker(latLng, map) {
     addMarkersItem(marker);
 
     let template = `
-            <li> <strong>Position ${getMarkersLength()}</strong><br> Lat : ${ marker.getPosition().lat() }, Long ${ marker.getPosition().lat() }</li> <br>
+            <li> <strong>Position ${getMarkersLength()}</strong><br> Lat : ${ marker.getPosition().lat() }, Long ${ marker.getPosition().lng() }</li> <br>
         `;
 
     paneList.innerHTML += template;
