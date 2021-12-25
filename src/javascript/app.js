@@ -12,8 +12,7 @@ let markerArray = [],
 sideBar.hidden = true
 
 function toggleSideBar() {
-    sideBar.hidden = false;
-    //return sideBar.hidden = !sideBar.hidden;
+    return sideBar.hidden = !sideBar.hidden;
 }
 
 // Map init
@@ -40,7 +39,7 @@ function initMap(listener) {
 
 // add Marker
 function addMarker(latLng) {
-    toggleSideBar();
+    sideBar.hidden = false;
 
     let marker = new google.maps.Marker({
         position: latLng,
@@ -48,10 +47,10 @@ function addMarker(latLng) {
     });
 
     google.maps.event.addListener(marker, 'click', function () {
-        removeMarkersItem(marker);
+        removeMarker(marker);
     });
 
-    addMarkersItem(marker);
+    addMarkers(marker);
     addLine(latLng);
 }
 
@@ -64,33 +63,23 @@ function getMarkersLength() {
     return markerArray.length;
 }
 
-function removeMarkersItem(marker) {
-    let index = getMarkers().indexOf(marker);
-    deleteMarkers(marker);
-    getMarkers().slice((index + 1), getMarkersLength());
+// marker
+function removeMarker(marker) {
+    let index = (getMarkers().indexOf(marker) + 1);
+
+    for (let i = 0; i < getMarkersLength(); i++){
+        if (getMarkers()[i] === marker){
+            getMarkers()[i].setMap(null);
+            getMarkers().splice(i, 1);
+            drawPath.getPath().removeAt(i);
+        }
+    }
     updatePaneHtml(index);
-    removeLine(marker);
 }
 
-function addMarkersItem(marker) {
+function addMarkers(marker) {
     markerArray.push(marker);
     createPaneHtml(marker);
-}
-
-function returnMarkersIndex(getMarkers, arg) {
-    if (Array.isArray(getMarkers())
-        && getMarkersLength() > 0) {
-        return getMarkers()[(arg - 1)] || null
-    }
-}
-
-// markers
-function hideMarkers(marker) {
-    marker.setMap(null);
-}
-
-function deleteMarkers(marker) {
-    hideMarkers(marker);
 }
 
 // markers html template
@@ -104,10 +93,9 @@ function createPaneHtml(marker) {
 }
 
 function updatePaneHtml(index) {
-    let idIndex = index === 0 ? 1 : (index + 1);
     for (let i = 0; i < paneList.children.length; i++){
-        if(parseInt(paneList.children[i].id) === idIndex){
-            document.getElementById(idIndex).remove();
+        if(parseInt(paneList.children[i].id) === index){
+            document.getElementById(index).remove();
         }
     }
 }
@@ -115,11 +103,4 @@ function updatePaneHtml(index) {
 // lines
 function addLine(latLng) {
     drawPath.getPath().setAt(drawPath.getPath().getLength(), latLng);
-}
-
-function removeLine(marker) {
-    for (let i = 0; i < drawPath.getPath().getLength(); i++){
-        if (getMarkers()[i] === marker)
-            drawPath.getPath().removeAt(i);
-    }
 }
