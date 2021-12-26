@@ -30,9 +30,7 @@ function initMap(listener) {
 
     drawPath.setMap(map);
 
-    let onChangeHandler = function (event) {
-        addMarker(event.latLng);
-    };
+    let onChangeHandler = function (event) { addMarker(event.latLng); };
 
     google.maps.event.addListener(map, 'click', onChangeHandler);
 }
@@ -48,6 +46,9 @@ function addMarker(latLng) {
 
     google.maps.event.addListener(marker, 'click', function () {
         removeMarker(marker);
+        if(!getMarkersLength()){
+            sideBar.hidden = true;
+        }
     });
 
     addMarkers(marker);
