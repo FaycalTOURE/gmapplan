@@ -65,16 +65,14 @@ function getMarkersLength() {
 
 // marker
 function removeMarker(marker) {
-    let index = (getMarkers().indexOf(marker) + 1);
-
     for (let i = 0; i < getMarkersLength(); i++){
         if (getMarkers()[i] === marker){
             getMarkers()[i].setMap(null);
+            updatePaneHtml(marker.getPosition().lat());
             getMarkers().splice(i, 1);
             drawPath.getPath().removeAt(i);
         }
     }
-    updatePaneHtml(index);
 }
 
 function addMarkers(marker) {
@@ -85,19 +83,15 @@ function addMarkers(marker) {
 // markers html template
 function createPaneHtml(marker) {
     let template = `
-            <li class="my-5" id="${getMarkersLength()}" data-identifier="pan-${getMarkersLength()}"> 
+            <li class="my-5" id="${marker.getPosition().lat()}" data-identifier="pan-${getMarkersLength()}"> 
                 <strong>Position ${getMarkersLength()}</strong><br>Lat : ${marker.getPosition().lat()}, Long : ${marker.getPosition().lng()}
             <br></li>
         `;
     paneList.insertAdjacentHTML('beforeend', template);
 }
 
-function updatePaneHtml(index) {
-    for (let i = 0; i < paneList.children.length; i++){
-        if(parseInt(paneList.children[i].id) === index){
-            document.getElementById(index).remove();
-        }
-    }
+function updatePaneHtml(lat){
+    document.getElementById(lat).remove();
 }
 
 // lines
